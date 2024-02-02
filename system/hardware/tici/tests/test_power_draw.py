@@ -16,7 +16,7 @@ from openpilot.system.hardware.tici.power_monitor import get_power
 from openpilot.selfdrive.manager.process_config import managed_processes
 from openpilot.selfdrive.manager.manager import manager_cleanup
 
-SAMPLE_TIME = 8   # seconds to sample power
+SAMPLE_TIME = 12   # seconds to sample power
 
 @dataclass
 class Proc:
@@ -25,7 +25,7 @@ class Proc:
   msgs: List[str]
   rtol: float = 0.05
   atol: float = 0.12
-  warmup: float = 6.
+  warmup: float = 10
 
 PROCS = [
   Proc('camerad', 2.1, msgs=['roadCameraState', 'wideRoadCameraState', 'driverCameraState']),

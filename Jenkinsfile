@@ -200,7 +200,7 @@ node {
           //["build master-ci", "cd $SOURCE_DIR/release && TARGET_DIR=$TEST_DIR $SOURCE_DIR/scripts/retry.sh ./build_devel.sh"],
           ["build openpilot", "cd selfdrive/manager && ./build.py"],
           ["check dirty", "release/check-dirty.sh"],
-          ["onroad tests", "pytest selfdrive/test/test_onroad.py -s"],
+          ["onroad tests", "pytest -s selfdrive/test/test_onroad.py"],
           ["time to onroad", "pytest selfdrive/test/test_time_to_onroad.py"],
         ])
       },
