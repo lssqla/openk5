@@ -57,7 +57,7 @@ class TestPowerDraw(unittest.TestCase):
     powers = []
 
     while True:
-      powers.append(get_power(0.1))
+      powers.append(get_power(1))
       for sock in socks.values():
         msg_count += len(messaging.drain_sock_raw(sock))
       if msg_count > msgs_expected or (time.time() - start_time) > max_time:
