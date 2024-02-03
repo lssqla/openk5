@@ -83,7 +83,7 @@ class TestPowerDraw(unittest.TestCase):
       msgs_received, _ = self.measure_msg_count_and_power(proc, MAX_WARMUP_TIME, msgs_expected)
 
       with self.subTest(msg=f'warmup failed for {proc}'):
-        np.testing.assert_allclose(msgs_expected, msgs_received, rtol=.02, atol=2)
+        self.assertGreaterEqual(msgs_received, msgs_expected)
 
       msgs_expected = self.get_expected_msg_count(proc, SAMPLE_TIME)
       msgs_received, now = self.measure_msg_count_and_power(proc, SAMPLE_TIME, msgs_expected)
