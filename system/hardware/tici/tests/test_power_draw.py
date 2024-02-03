@@ -16,7 +16,7 @@ from openpilot.selfdrive.manager.process_config import managed_processes
 from openpilot.selfdrive.manager.manager import manager_cleanup
 
 SAMPLE_TIME = 8        # seconds to sample power
-MAX_WARMUP_TIME = 10   # max amount of time to wait for process to warmup
+MAX_WARMUP_TIME = 16   # max amount of time to wait for process to warmup
 WARMUP_TIME = 4        # need 4 seconds worth of messages for warmup to complete
 
 @dataclass
@@ -102,6 +102,8 @@ class TestPowerDraw(unittest.TestCase):
 
     tab = [['process', 'expected (W)', 'measured (W)', '# msgs expected', '# msgs received']]
     for proc in PROCS:
+      msgs_expected = self.get_expected_msg_count(proc, SAMPLE_TIME)
+      msgs_received = msg_counts[proc.name]
       tab.append([proc.name, round(proc.power, 2), round(used[proc.name], 2), msgs_expected, msgs_received])
     print(tabulate(tab))
     print(f"Baseline {baseline:.2f}W\n")
