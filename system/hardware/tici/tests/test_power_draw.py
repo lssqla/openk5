@@ -29,7 +29,7 @@ class Proc:
 
 PROCS = [
   Proc('camerad', 2.1, msgs=['roadCameraState', 'wideRoadCameraState', 'driverCameraState']),
-  Proc('modeld', 1.12, atol=0.2, msgs=['modelV2']),
+  Proc('modeld', 1, atol=0.2, msgs=['modelV2']),
   Proc('dmonitoringmodeld', 0.4, msgs=['driverStateV2']),
   Proc('encoderd', 0.23, msgs=[]),
   Proc('mapsd', 0.05, msgs=['mapRenderState']),
@@ -79,11 +79,11 @@ class TestPowerDraw(unittest.TestCase):
     for proc in PROCS:
       managed_processes[proc.name].start()
 
-      msgs_expected = self.get_expected_msg_count(proc, WARMUP_TIME)
-      msgs_received, _ = self.measure_msg_count_and_power(proc, MAX_WARMUP_TIME, msgs_expected)
+      warmup_msgs_expected = self.get_expected_msg_count(proc, WARMUP_TIME)
+      warmup_msgs_received, _ = self.measure_msg_count_and_power(proc, MAX_WARMUP_TIME, warmup_msgs_expected)
 
       with self.subTest(msg=f'warmup failed for {proc}'):
-        self.assertGreaterEqual(msgs_received, msgs_expected)
+        self.assertGreaterEqual(warmup_msgs_received, warmup_msgs_expected)
 
       msgs_expected = self.get_expected_msg_count(proc, SAMPLE_TIME)
       msgs_received, now = self.measure_msg_count_and_power(proc, SAMPLE_TIME, msgs_expected)
@@ -91,7 +91,7 @@ class TestPowerDraw(unittest.TestCase):
       with self.subTest(msg=f'msg count failed for {proc}'):
         np.testing.assert_allclose(msgs_expected, msgs_received, rtol=.02, atol=2)
 
-      msg_counts[proc.name] = msgs_received
+      msg_counts[proc.name] = msgs_received, warmup_msgs_received
       used[proc.name] = now - prev
       prev = now
 
@@ -100,11 +100,11 @@ class TestPowerDraw(unittest.TestCase):
 
     manager_cleanup()
 
-    tab = [['process', 'expected (W)', 'measured (W)', '# msgs expected', '# msgs received']]
+    tab = [['process', 'expected (W)', 'measured (W)', '# msgs expected', '# msgs received', '# msgs received warmup']]
     for proc in PROCS:
       msgs_expected = self.get_expected_msg_count(proc, SAMPLE_TIME)
-      msgs_received = msg_counts[proc.name]
-      tab.append([proc.name, round(proc.power, 2), round(used[proc.name], 2), msgs_expected, msgs_received])
+      msgs_received, warmup_msgs_received = msg_counts[proc.name]
+      tab.append([proc.name, round(proc.power, 2), round(used[proc.name], 2), msgs_expected, msgs_received, warmup_msgs_received])
     print(tabulate(tab))
     print(f"Baseline {baseline:.2f}W\n")
 
